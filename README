@@ -1,0 +1,50 @@
+snap - Java client for Apple's Push Notification Service
+
+  Snap is a scalable thread-safe client for Apple's Push Notification Service.
+  Outgoing notifications are queued and sent asynchronously via a persistent
+  connection to the notification gateway.
+
+  Join the lambdaWorks-OSS Google Group to discuss this project:
+
+    http://groups.google.com/group/lambdaworks-oss
+    lambdaworks-oss@googlegroups.com
+
+Basic Usage
+
+  PushNotificationClient c = new PushNotificationClient(env, keystore, passwd)
+  PushNotification n = c.create(token).alert("Hello World!")
+  c.send(n)
+
+  A PushNotificationClient is designed to be long-lived, and if the connection
+  is lost will reconnect until shutdown() is called. Pending notifications
+  will be (re)sent afer successful reconnection.
+
+KeyStore
+
+  PushNotificationClient requires a KeyStore containing the private key and
+  certificate issued by Apple's Provisioning Portal. The simplest method is
+  to generate a PKCS #12 file containing the key & cert, either by exporting
+  via Keychain Access on Mac OS X or using openssl's pkcs12 command.
+
+  char[] passwd = "foobar".toCharArray();
+  KeyStore keystore = KeyStore.getInstance("PKCS12");
+  keystore.load(new FileInputStream("myapp-aps-prod.p12"), passwd);
+
+Feedback Service
+
+  A PushNotificationClient will automatically connect to the APNS Feedback
+  Service at a configurable interval and deliver any feedback notifications
+  to all registered listeners.
+
+  client.setFeedbackInterval(10, MINUTES)
+  client.addFeedbackListener(new FeedbackListener { ... })
+
+Maven Artifacts
+
+  Releases of snap are available in the maven central repository:
+
+  <dependency>
+    <groupId>com.lambdaworks</groupId>
+    <artifactId>snap</artifactId>
+    <version>1.0.0</version>
+  </dependency>
